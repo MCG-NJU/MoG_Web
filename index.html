@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>MoG: Motion-Aware Generative Frame Interpolation</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+
+<link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+      rel="stylesheet">
+      <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="./static/css/bulma.min.css">
+<link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+<link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+<link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+<link rel="stylesheet" href="./static/css/index.css">
+<link rel="icon" href="./static/icon.svg">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script defer src="./static/js/fontawesome.all.min.js"></script>
+<script src="./static/js/bulma-carousel.min.js"></script>
+<script src="./static/js/bulma-slider.min.js"></script>
+<script src="./static/js/index.js"></script>
+<script src="./static/js/select_frame.js"></script>
+</head>
+
+<body>
+	<button style="position: fixed;right: 15px;top:  50%;height: 100px;width: 140px; font-size: 20px;" type="button"><a href="#top">Back to top</a></button> 
+<div class="page-container">
+  <!-- <h1 align="center">DynamiCrafter:<br>Animating Open-domain Images with Video Diffusion Priors</h1> -->
+  
+  
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">MoG: Motion-Aware Generative Frame Interpolation</h1>
+            <div class="is-size-4 publication-authors">
+            </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=48vfuRAAAAAJ&hl=en">Guozhen Zhang</a><sup>1,2</sup>,</span>
+              <span class="author-block">
+                  <a href="https://scholar.google.com/citations?user=ydgR3LgAAAAJ&hl=en">Yuhan Zhu</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=TSMchWcAAAAJ&hl=en">Yutao Cui</a><sup>2</sup>,</span>
+              <span class="author-block">
+                <a>Xiaotong Zhao</a><sup>2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=FSSXeyAAAAAJ&hl=en">Kai Ma</a><sup>2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://wanglimin.github.io/">Limin Wang</a><sup>1,3</sup>
+              </span>
+            </div>
+  
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>State Key Laboratory for Novel Software Technology, Nanjing University</span>&nbsp;
+              <span class="author-block"><sup>2</sup>Platform and Content Group (PCG), Tencent</span>&nbsp;
+              <span class="author-block"><sup>3</sup>Shanghai AI Lab</span>
+            </div>
+  
+            <div class="column has-text-centered">
+              <div class="publication-links">
+
+                <span class="link-block">
+                  <a href="#mog_intro"
+                     class="external-link button is-normal is-rounded">
+                    <span>🌱 Introduction</span>
+                  </a>
+                </span>
+              
+                <span class="link-block">
+                  <a href="#our_results_container"
+                     class="external-link button is-normal is-rounded">
+                    <span>🎬 Demos</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="#comparison_with_baseline_container"
+                     class="external-link button is-normal is-rounded">
+                    <span>💥 Comparisons</span>
+                  </a>
+                </span>              
+                <!-- <span class="link-block">
+                  <a href="#failure_cases_container"
+                     class="external-link button is-normal is-rounded">
+                    <span>💡 Failure cases</span>
+                  </a>
+                </span> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+	
+	<a href="#top"></a>
+
+    <!------------------ BEGIN SECTION ------------------>
+    <p>&nbsp;</p>
+    <hr>
+    <h2 style="margin-top: 0em;" id="mog_intro" align="left"></a>🌱 Introduction of our MoG</h2>
+      
+    <p style="font-size: 1.2em; line-height: 1.6; color: #333; margin-bottom: -2.5rem;">
+        MoG is a generative video frame interpolation (VFI) model, designed to synthesize intermediate frames between two input frames.
+        <br><br>
+        MoG marks the first explicit incorporation of motion guidance between input frames to enhance the motion awareness of generative models. We demonstrate that the intermediate flow derived from flow-based VFI methods can effectively serve as motion guidance, and we propose a simple yet efficient approach to integrate this prior into the network. As a result, MoG achieves significant improvements over existing open-source generative VFI methods, excelling in both real-world and animated scenarios.
+    </p>
+    <br><br>
+    <img src="01intro/pipeline.png" alt="pipeline figure" style="width: 80%; display: block; margin: 0 auto;">
+    </iframe>
+
+
+  <!------------------ BEGIN SECTION ------------------>
+  <p>&nbsp;</p>
+  <hr>
+  <h2 style="margin-top: 0em;" id="our_results_container" align="left"><a name="image-results" id="image-results"></a>🎬 Demos produced by our MoG</h2>
+    
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example1/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example1/input_frames/"></th>
+        <th><video  width="300" src="02demo/example1/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example2/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example2/input_frames/"></th>
+        <th><video  width="300" src="02demo/example2/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example3/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example3/input_frames/"></th>
+        <th><video  width="300" src="02demo/example3/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example4/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example4/input_frames/"></th>
+        <th><video  width="300" src="02demo/example4/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example5/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example5/input_frames/"></th>
+        <th><video  width="300" src="02demo/example5/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example6/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example6/input_frames/"></th>
+        <th><video  width="300" src="02demo/example6/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example7/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example7/input_frames/"></th>
+        <th><video  width="300" src="02demo/example7/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example8/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example8/input_frames/"></th>
+        <th><video  width="300" src="02demo/example8/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example9/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example9/input_frames/"></th>
+        <th><video  width="300" src="02demo/example9/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example10/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example10/input_frames/"></th>
+        <th><video  width="300" src="02demo/example10/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <table  width="1024" align="center">
+    <tbody>
+      <tr>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+        <th class="media1">Input frames</th>
+        <th class="media1">Interpolation results</th>
+      </tr>
+      <tr>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example11/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example11/input_frames/"></th>
+        <th><video  width="300" src="02demo/example11/Ours.mp4" autoplay loop controls muted/></th>
+        <th class="media1"><img class="input_image_topdownlayout" src="02demo/example12/input_frames/00001.png" alt="Image 1" data-base-path="02demo/example12/input_frames/"></th>
+        <th><video  width="300" src="02demo/example12/Ours.mp4" autoplay loop controls muted/></th>
+      </tr>
+    </tbody>
+  </table>
+
+    <!------------------ BEGIN SECTION ------------------>
+    <p>&nbsp;</p>
+    <hr>
+        
+    <h2 id="comparison_with_baseline_container" align="left"><a name="image-results" id="image-results"></a>💥 Comparisons with existing generative VFI methods</h2>
+    <div class="container" id="baseline">
+      <h2>Real-world scenes</h2>
+
+      <!-- example1 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example1/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example1/"></th>
+            <th><video  width="300" src="03comparisons/GI/example1.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example1.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example1.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <!-- example2 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example2/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example2/"></th>
+            <th><video  width="300" src="03comparisons/GI/example2.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example2.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example2.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+
+      <!-- example3 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example3/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example3/"></th>
+            <th><video  width="300" src="03comparisons/GI/example3.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example3.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example3.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <!-- example4 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example4/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example4/"></th>
+            <th><video  width="300" src="03comparisons/GI/example4.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example4.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example4.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <!-- example5 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example5/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example5/"></th>
+            <th><video  width="300" src="03comparisons/GI/example5.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example5.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example5.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <h2>Animated scenes</h2>
+      <!-- example6 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example6/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example6/"></th>
+            <th><video  width="300" src="03comparisons/GI/example6.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example6.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example6.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <!-- example7 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example7/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example7/"></th>
+            <th><video  width="300" src="03comparisons/GI/example7.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example7.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example7.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+          
+      <!-- example8 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example8/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example8/"></th>
+            <th><video  width="300" src="03comparisons/GI/example8.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example8.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example8.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+      <!-- example9 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example9/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example9/"></th>
+            <th><video  width="300" src="03comparisons/GI/example9.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example9.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example9.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+
+      <!-- example10 -->
+      <table  width="1024" align="center">
+        <tbody>
+          <tr>
+            <th class="media1">Input frames</th>
+            <th class="media1">GI</th>
+            <th class="media1">DynamiCrafter</th>
+            <th class="media1">MoG (Ours)</th>
+          </tr>
+          <tr>
+            <th class="media1"><img class="input_image_topdownlayout" src="03comparisons/input_frames/example10/frame1.png" alt="Image 1" data-base-path="03comparisons/input_frames/example10/"></th>
+            <th><video  width="300" src="03comparisons/GI/example10.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Crafter/example10.mp4" autoplay loop controls muted/></th>
+            <th><video  width="300" src="03comparisons/Ours/example10.mp4" autoplay loop controls muted/></th>
+          </tr>
+          <tr> <td><br /></td> </tr> 
+        </tbody>
+      </table>
+
+    <!------------------ BEGIN SECTION ------------------>
+    <!-- <hr>
+        
+    <h2 id="failure_cases_container" align="left"><a name="image-results" id="image-results"></a>💡 Failure cases</h2>
+
+    <p align="left">
+      Our model may not correctly and semantically understand the image contents. (e.g., the black part should be the rigid body of the aircraft, which cannot sway with the wind.)
+    </p>
+    <table  width="1024" align="center">
+      <tbody>
+        <tr>
+          <th style="font-size: 16px">Input starting frame</th>
+          <th style="font-size: 16px">Input ending frame</th>
+          <th style="font-size: 16px">Our failure case</th>
+        </tr>
+        <tr>
+          <th><img class="input_image_frameinterp" src="./05limitation/74845_304_frame1.png" alt=""/></th>
+          <th><img class="input_image_frameinterp" src="./05limitation/74845_304_frame3.png" alt=""/></th>
+          <th><video  width="300" src="./05limitation/74845_304_WOurs.mp4" autoplay loop controls muted/></th>
+        </tr>
+      </tbody>
+    </table> -->
+
+    <!------------------ END   SECTION ------------------> 
+
+</div>
+
+
+<script>
+  const videoContainer = document.querySelector('.video-container');
+  const video = document.querySelector('video');
+  const hoverImage = document.querySelector('.hover-image');
+  const caption = document.querySelector('.caption');
+
+  videoContainer.addEventListener('mouseenter', () => {
+      video.pause();
+      hoverImage.style.display = 'block';
+      caption.style.display = 'block';
+  });
+
+  videoContainer.addEventListener('mouseleave', () => {
+      video.play();
+      hoverImage.style.display = 'none';
+      caption.style.display = 'none';
+  });
+
+  // for nerfies template
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  gtag('js', new Date());
+
+  gtag('config', 'G-PYVRSFMDRL');
+
+
+
+
+
+  // for carousel
+  window.addEventListener('DOMContentLoaded', (event) => {
+        const videoWrappers = document.querySelectorAll('.video-wrapper');
+      
+        videoWrappers.forEach(wrapper => {
+          const defaultVideo = wrapper.querySelector('.default-video');
+          const aspectRatio = defaultVideo.videoWidth / defaultVideo.videoHeight;
+          const height = wrapper.offsetWidth / aspectRatio;
+      
+          wrapper.style.height = `${height}px`;
+      
+          wrapper.addEventListener('mouseenter', () => {
+            defaultVideo.pause();
+            hoverVideo.play();
+          });
+      
+          wrapper.addEventListener('mouseleave', () => {
+            defaultVideo.play();
+            hoverVideo.pause();
+          });
+        });
+      }); 
+      $(document).ready(function() {
+        var carouselItems = $('.carousel .item');
+        var numItems = carouselItems.length;
+        var numVideos = 5;
+        var currentIndex = 0;
+    
+        $('.carousel').on('click', function() {
+          currentIndex++;
+          if (currentIndex + numVideos <= numItems) {
+            carouselItems.removeClass('active');
+            carouselItems.slice(currentIndex, currentIndex + numVideos).addClass('active');
+          } else {
+            currentIndex = 0;
+            carouselItems.removeClass('active');
+            carouselItems.slice(currentIndex, currentIndex + numVideos).addClass('active');
+          }
+        });
+    
+        carouselItems.slice(currentIndex, currentIndex + numVideos).addClass('active');
+      });
+</script>
+
+
+<footer class="footer">
+  <div class="container" style="text-align: left;">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Website content is licensed under a <a rel="license"
+                                                href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative
+            Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            Website source code based on the <a href="https://nerfies.github.io/"> Nerfies</a> project page and <a href="https://diffusion-tokenflow.github.io/"> TokenFlow (supp)</a>. If you want to reuse their <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a>, please credit them appropriately.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
