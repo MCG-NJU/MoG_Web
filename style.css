@@ -86,8 +86,8 @@ body {
 
 /* 链接按钮样式 */
 .publication-links {
-  margin-top: -0.5rem; /* 链接按钮区域的顶部间距 */
-  margin-bottom: -5rem;
+  margin-top: -0.8rem; /* 链接按钮区域的顶部间距 */
+  margin-bottom: -0.5rem;
 }
 
 .link-block {
