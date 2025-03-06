@@ -135,7 +135,7 @@
     <p style="font-size: 1.2em; line-height: 1.6; color: #333; margin-bottom: -2.5rem;">
         MoG is a generative video frame interpolation (VFI) model, designed to synthesize intermediate frames between two input frames.
         <br><br>
-        MoG marks the first explicit incorporation of motion guidance between input frames to enhance the motion awareness of generative models. We demonstrate that the intermediate flow derived from flow-based VFI methods can effectively serve as motion guidance, and we propose a simple yet efficient approach to integrate this prior into the network. As a result, MoG achieves significant improvements over existing open-source generative VFI methods, excelling in both real-world and animated scenarios.
+        MoG is the first VFI framework to bridge the gap between flow-based stability and generative flexibility. We introduce a dual-level guidance injection design to constrain generated motion using motion trajectories derived from optical flow. To enhance the generative model's ability to dynamically correct flow errors, we implement encoder-only guidance injection and selective parameter fine-tuning. As a result, MoG achieves significant improvements over existing open-source generative VFI methods, delivering superior performance in both real-world and animated scenarios.
     </p>
     <br><br>
     <img src="01intro/pipeline.png" alt="pipeline figure" style="width: 80%; display: block; margin: 0 auto;">
